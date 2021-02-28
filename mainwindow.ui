@@ -29,6 +29,9 @@
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
            <widget class="QToolButton" name="toLeftBtn">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
               <horstretch>0</horstretch>
@@ -51,6 +54,9 @@
           </item>
           <item>
            <widget class="QToolButton" name="toRightBtn">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
               <horstretch>0</horstretch>
@@ -119,7 +125,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="closeBtn">
+           <widget class="QPushButton" name="removeBtn">
             <property name="text">
              <string/>
             </property>
@@ -271,6 +277,9 @@
           </property>
           <property name="defaultDropAction">
            <enum>Qt::MoveAction</enum>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
           </property>
          </widget>
         </item>
