@@ -1,6 +1,3 @@
-# TODO: Change spinbox to custom class with custom valueEdited signal
-
-
 import sys
 from dataclasses import dataclass
 
@@ -22,14 +19,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
         self.data_items = []
-        # self.is_image_added = False
 
         # Connecting callbacks to signals
         self.addBtn.clicked.connect(self.image_dialog)
         self.imagesListWidget.doubleClicked.connect(
             self.images_list_double_clicked
         )
-        self.indexBox.valueChanged.connect(self.index_changed)
+        self.indexBox.valueEdited.connect(self.index_changed)
         self.imagesListWidget.model().rowsMoved.connect(self.items_moved)
         self.toLeftBtn.clicked.connect(self.to_left_btn_clicked)
         self.toRightBtn.clicked.connect(self.to_right_btn_clicked)
@@ -48,31 +44,44 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def rotate_btn_clicked(self, method):
 
-        def signal():
+        def slot():
             if self.imagesListWidget.count() != 0:
                 self.transpose_image(self.indexBox.value() - 1, method)
                 self.update_image(self.indexBox.value() - 1)
 
-        return signal
+        return slot
 
     def remove_btn_clicked(self):
         if self.imagesListWidget.count() != 0:
             index = self.indexBox.value() - 1
             self.remove_image(index)
 
+    def set_enabled_action_buttons(self, enabled):
+        self.removeBtn.setEnabled(enabled)
+        self.rotateLeftBtn.setEnabled(enabled)
+        self.rotateRightBtn.setEnabled(enabled)
+
     def remove_image(self, index):
         self.imagesListWidget.takeItem(index)
         self.data_items.pop(index)
+        self.indexBox.setMaximum(self.imagesListWidget.count())
+        self.pagesCountLabel.setText(str(self.imagesListWidget.count()))
         if self.imagesListWidget.count() == 0:
             self.indexBox.setMinimum(0)
+            self.indexBox.setValue(0)
+            self.imageWidget.setPixmap(QPixmap())
+            self.fileNameLabel.setText('')
+            self.set_enabled_action_buttons(False)
+        else:
+            self.set_current_item(min(index, self.imagesListWidget.count() - 1))
 
     def to_left_btn_clicked(self):
         if self.indexBox.value() > 1:
-            self.indexBox.setValue(self.indexBox.value() - 1)
+            self.set_current_item(self.indexBox.value() - 2)
 
     def to_right_btn_clicked(self):
         if self.indexBox.value() < self.imagesListWidget.count():
-            self.indexBox.setValue(self.indexBox.value() + 1)
+            self.set_current_item(self.indexBox.value())
 
     def items_moved(self, _, start, end, __, destination):
         cur_item = self.data_items[self.indexBox.value() - 1]
@@ -92,7 +101,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.imagesListWidget.count() != 0:
             self.set_current_item(index - 1)
             self.imagesListWidget.setCurrentRow(index - 1)
-        # self.is_image_added = False
 
     def image_dialog(self):
         images = QFileDialog.getOpenFileNames(self, 'Select image', '')[0]
@@ -102,17 +110,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def add_image(self, img_path):
         im = Image.open(img_path).convert('RGBA')
         self.data_items.append(DataItem(im, img_path))
-
-        # Scaling icon for better performance
         self.imagesListWidget.addItem(img_path)
-        # self.is_image_added = True
-
-        # self.imageWidget.setPixmap(pix_map)
-        # self.fileNameLabel.setText(img_path)
-        self.indexBox.setMinimum(1)
         self.indexBox.setMaximum(self.imagesListWidget.count())
-        self.indexBox.setValue(self.imagesListWidget.count())
+        self.indexBox.setMinimum(1)
         self.pagesCountLabel.setText(str(self.imagesListWidget.count()))
+        self.set_current_item(self.imagesListWidget.count() - 1)
+        self.set_enabled_action_buttons(True)
+        self.imagesListWidget.setCurrentRow(self.imagesListWidget.count() - 1)
 
     def switch_arrows(self, index):
         self.toLeftBtn.setEnabled(index > 0)
@@ -120,11 +124,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def images_list_double_clicked(self, _):
         index = self.imagesListWidget.currentRow()
-        self.indexBox.setValue(index + 1)
+        self.set_current_item(index)
 
     def update_image(self, index):
         data_item = self.data_items[index]
         pix_map = QPixmap.fromImage(ImageQt.ImageQt(data_item.img))
+        # Scaling icon for better performance
         icon = QIcon(pix_map.scaledToWidth(32))
         self.imageWidget.setPixmap(pix_map)
         self.imagesListWidget.item(index).setIcon(icon)
@@ -133,6 +138,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_image(index)
         self.fileNameLabel.setText(self.data_items[index].path)
         self.switch_arrows(index)
+        self.indexBox.setValue(index + 1)
 
 
 if __name__ == '__main__':
