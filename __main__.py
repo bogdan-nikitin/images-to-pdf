@@ -1,9 +1,11 @@
 import sys
 from dataclasses import dataclass
 
-from PIL import ImageQt, Image
+from PIL import ImageQt, Image, UnidentifiedImageError
 from PyQt5.QtGui import QPixmap, QIcon
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
+from PyQt5.QtWidgets import (
+    QApplication, QMainWindow, QFileDialog, QMessageBox
+)
 
 from mainwindow import Ui_MainWindow
 
@@ -11,6 +13,7 @@ from mainwindow import Ui_MainWindow
 @dataclass
 class DataItem:
     img: Image.Image
+    # Maybe I should use something from pathlib instead of str
     path: str
 
 
@@ -36,6 +39,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.rotateRightBtn.clicked.connect(
             self.rotate_btn_clicked(Image.ROTATE_270)
         )
+        self.saveBtn.clicked.connect(self.save_dialog)
+        self.actionSave.triggered.connect(self.save_dialog)
+        self.actionAddImage.triggered.connect(self.image_dialog)
 
     def transpose_image(self, index, method):
         self.data_items[index].img = self.data_items[index].img.transpose(
@@ -60,6 +66,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.removeBtn.setEnabled(enabled)
         self.rotateLeftBtn.setEnabled(enabled)
         self.rotateRightBtn.setEnabled(enabled)
+        self.saveBtn.setEnabled(enabled)
 
     def remove_image(self, index):
         self.imagesListWidget.takeItem(index)
@@ -108,7 +115,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.add_image(image)
 
     def add_image(self, img_path):
-        im = Image.open(img_path).convert('RGBA')
+        try:
+            im = Image.open(img_path).convert('RGBA')
+        except UnidentifiedImageError:
+            QMessageBox.critical(self, 'Error', f'{img_path} is not an image')
+            return False
+        except Exception as e:
+            QMessageBox.critical(
+                self,
+                'Error',
+                f'When opening a file {img_path} an unknown error occurred. '
+                f'Error text: {e}'
+            )
+            return False
         self.data_items.append(DataItem(im, img_path))
         self.imagesListWidget.addItem(img_path)
         self.indexBox.setMaximum(self.imagesListWidget.count())
@@ -117,6 +136,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.set_current_item(self.imagesListWidget.count() - 1)
         self.set_enabled_action_buttons(True)
         self.imagesListWidget.setCurrentRow(self.imagesListWidget.count() - 1)
+        return True
 
     def switch_arrows(self, index):
         self.toLeftBtn.setEnabled(index > 0)
@@ -139,6 +159,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.fileNameLabel.setText(self.data_items[index].path)
         self.switch_arrows(index)
         self.indexBox.setValue(index + 1)
+
+    def save_dialog(self):
+        output_file_name, _ = QFileDialog.getSaveFileName(
+            self, 'Save PDF', '', 'PDF (*.pdf)'
+        )
+        if output_file_name:
+            self.save_as_pdf(output_file_name)
+
+    def save_as_pdf(self, output_file_name):
+        if not self.data_items:
+            return False
+        try:
+            data_items = [item.img.convert('RGB') for item in self.data_items]
+            data_items[0].save(
+                output_file_name, save_all=True,
+                append_images=data_items[1:]
+            )
+        except Exception as e:
+            QMessageBox.critical(
+                self,
+                'Error',
+                f'An unknown error occurred while saving. '
+                f'Error text: {e}'
+            )
 
 
 if __name__ == '__main__':

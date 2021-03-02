@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>996</width>
-    <height>779</height>
+    <width>1028</width>
+    <height>674</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -24,7 +24,7 @@
     <item row="0" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,0,0,0">
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
@@ -104,6 +104,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="rotateLeftBtn">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -115,6 +118,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="rotateRightBtn">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -126,6 +132,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="removeBtn">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -159,7 +168,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>%file_name%</string>
+           <string/>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -182,7 +191,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QSpinBox" name="indexBox">
+           <widget class="SpinBox" name="indexBox">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -298,6 +307,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="saveBtn">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Save to PDF</string>
           </property>
@@ -318,7 +330,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>996</width>
+     <width>1028</width>
      <height>21</height>
     </rect>
    </property>
@@ -326,14 +338,20 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="addImageAction"/>
+    <addaction name="actionAddImage"/>
+    <addaction name="actionSave"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="addImageAction">
+  <action name="actionAddImage">
    <property name="text">
     <string>Add Image(s)</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
    </property>
   </action>
  </widget>
@@ -343,6 +361,11 @@
    <extends>QWidget</extends>
    <header>scaling_image</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>spinbox</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -9,13 +9,12 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from spinbox import SpinBox
 
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(996, 779)
+        MainWindow.resize(1028, 674)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -69,6 +68,7 @@ class Ui_MainWindow(object):
         self.addBtn.setObjectName("addBtn")
         self.horizontalLayout_2.addWidget(self.addBtn)
         self.rotateLeftBtn = QtWidgets.QPushButton(self.centralwidget)
+        self.rotateLeftBtn.setEnabled(False)
         self.rotateLeftBtn.setText("")
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap("rotate-left.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -76,6 +76,7 @@ class Ui_MainWindow(object):
         self.rotateLeftBtn.setObjectName("rotateLeftBtn")
         self.horizontalLayout_2.addWidget(self.rotateLeftBtn)
         self.rotateRightBtn = QtWidgets.QPushButton(self.centralwidget)
+        self.rotateRightBtn.setEnabled(False)
         self.rotateRightBtn.setText("")
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap("rotate-right.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -83,6 +84,7 @@ class Ui_MainWindow(object):
         self.rotateRightBtn.setObjectName("rotateRightBtn")
         self.horizontalLayout_2.addWidget(self.rotateRightBtn)
         self.removeBtn = QtWidgets.QPushButton(self.centralwidget)
+        self.removeBtn.setEnabled(False)
         self.removeBtn.setText("")
         icon3 = QtGui.QIcon()
         icon3.addPixmap(QtGui.QPixmap("close.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -98,6 +100,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.fileNameLabel.sizePolicy().hasHeightForWidth())
         self.fileNameLabel.setSizePolicy(sizePolicy)
+        self.fileNameLabel.setText("")
         self.fileNameLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.fileNameLabel.setObjectName("fileNameLabel")
         self.verticalLayout_2.addWidget(self.fileNameLabel)
@@ -118,7 +121,7 @@ class Ui_MainWindow(object):
         self.indexBox.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
         self.indexBox.setAccelerated(False)
         self.indexBox.setMinimum(0)
-        self.indexBox.setMaximum(999999999)
+        self.indexBox.setMaximum(0)
         self.indexBox.setProperty("value", 0)
         self.indexBox.setObjectName("indexBox")
         self.horizontalLayout_4.addWidget(self.indexBox)
@@ -131,6 +134,7 @@ class Ui_MainWindow(object):
         spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem3)
         self.verticalLayout_2.addLayout(self.horizontalLayout_4)
+        self.verticalLayout_2.setStretch(0, 1)
         self.horizontalLayout.addLayout(self.verticalLayout_2)
         self.line = QtWidgets.QFrame(self.centralwidget)
         self.line.setFrameShape(QtWidgets.QFrame.VLine)
@@ -153,6 +157,7 @@ class Ui_MainWindow(object):
         spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem4)
         self.saveBtn = QtWidgets.QPushButton(self.centralwidget)
+        self.saveBtn.setEnabled(False)
         icon4 = QtGui.QIcon()
         icon4.addPixmap(QtGui.QPixmap("save.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.saveBtn.setIcon(icon4)
@@ -162,7 +167,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.horizontalLayout, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 996, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1028, 21))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -170,9 +175,12 @@ class Ui_MainWindow(object):
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
-        self.addImageAction = QtWidgets.QAction(MainWindow)
-        self.addImageAction.setObjectName("addImageAction")
-        self.menuFile.addAction(self.addImageAction)
+        self.actionAddImage = QtWidgets.QAction(MainWindow)
+        self.actionAddImage.setObjectName("actionAddImage")
+        self.actionSave = QtWidgets.QAction(MainWindow)
+        self.actionSave.setObjectName("actionSave")
+        self.menuFile.addAction(self.actionAddImage)
+        self.menuFile.addAction(self.actionSave)
         self.menubar.addAction(self.menuFile.menuAction())
 
         self.retranslateUi(MainWindow)
@@ -183,10 +191,11 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "Image2PDF"))
         self.toLeftBtn.setText(_translate("MainWindow", "..."))
         self.toRightBtn.setText(_translate("MainWindow", "..."))
-        self.fileNameLabel.setText(_translate("MainWindow", "%file_name%"))
         self.label.setText(_translate("MainWindow", "/"))
         self.pagesCountLabel.setText(_translate("MainWindow", "0"))
         self.saveBtn.setText(_translate("MainWindow", "Save to PDF"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
-        self.addImageAction.setText(_translate("MainWindow", "Add Image(s)"))
+        self.actionAddImage.setText(_translate("MainWindow", "Add Image(s)"))
+        self.actionSave.setText(_translate("MainWindow", "Save"))
 from scaling_image import ScalingImage
+from spinbox import SpinBox

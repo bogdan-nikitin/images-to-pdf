@@ -1,5 +1,6 @@
-from PyQt5 import QtCore, QtWidgets
 import functools
+
+from PyQt5 import QtCore, QtWidgets
 
 
 class SpinBox(QtWidgets.QSpinBox):
@@ -29,9 +30,9 @@ class SpinBox(QtWidgets.QSpinBox):
             )(*args, **kwargs)
             self.__value_set = False
             return result
+
         return decorated
 
     def __emit_value_edited(self, value):
         if not self.__value_set:
             self.valueEdited.emit(value)
-
