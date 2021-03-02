@@ -2,6 +2,7 @@ import sys
 from dataclasses import dataclass
 
 from PIL import ImageQt, Image, UnidentifiedImageError
+from PyQt5.QtCore import QMutex
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QFileDialog, QMessageBox
@@ -42,6 +43,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.saveBtn.clicked.connect(self.save_dialog)
         self.actionSave.triggered.connect(self.save_dialog)
         self.actionAddImage.triggered.connect(self.image_dialog)
+        self.transpose_image_mutex = QMutex()
 
     def transpose_image(self, index, method):
         self.data_items[index].img = self.data_items[index].img.transpose(
@@ -49,11 +51,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
 
     def rotate_btn_clicked(self, method):
-
         def slot():
-            if self.imagesListWidget.count() != 0:
-                self.transpose_image(self.indexBox.value() - 1, method)
-                self.update_image(self.indexBox.value() - 1)
+            # If there is no mutex and you press the rotate button many times
+            # and the image is large, then the app may crash
+            if self.transpose_image_mutex.tryLock():
+                if self.imagesListWidget.count() != 0:
+                    self.transpose_image(self.indexBox.value() - 1, method)
+                    self.update_image(self.indexBox.value() - 1)
+                self.transpose_image_mutex.unlock()
 
         return slot
 
@@ -67,6 +72,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.rotateLeftBtn.setEnabled(enabled)
         self.rotateRightBtn.setEnabled(enabled)
         self.saveBtn.setEnabled(enabled)
+        self.actionSave.setEnabled(enabled)
 
     def remove_image(self, index):
         self.imagesListWidget.takeItem(index)
@@ -107,7 +113,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def index_changed(self, index):
         if self.imagesListWidget.count() != 0:
             self.set_current_item(index - 1)
-            self.imagesListWidget.setCurrentRow(index - 1)
+            # self.imagesListWidget.setCurrentRow(index - 1)
 
     def image_dialog(self):
         images = QFileDialog.getOpenFileNames(self, 'Select image', '')[0]
@@ -135,7 +141,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pagesCountLabel.setText(str(self.imagesListWidget.count()))
         self.set_current_item(self.imagesListWidget.count() - 1)
         self.set_enabled_action_buttons(True)
-        self.imagesListWidget.setCurrentRow(self.imagesListWidget.count() - 1)
         return True
 
     def switch_arrows(self, index):
@@ -159,6 +164,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.fileNameLabel.setText(self.data_items[index].path)
         self.switch_arrows(index)
         self.indexBox.setValue(index + 1)
+        self.imagesListWidget.setCurrentRow(index)
 
     def save_dialog(self):
         output_file_name, _ = QFileDialog.getSaveFileName(
@@ -169,7 +175,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def save_as_pdf(self, output_file_name):
         if not self.data_items:
-            return False
+            return
         try:
             data_items = [item.img.convert('RGB') for item in self.data_items]
             data_items[0].save(

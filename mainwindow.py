@@ -178,6 +178,7 @@ class Ui_MainWindow(object):
         self.actionAddImage = QtWidgets.QAction(MainWindow)
         self.actionAddImage.setObjectName("actionAddImage")
         self.actionSave = QtWidgets.QAction(MainWindow)
+        self.actionSave.setEnabled(False)
         self.actionSave.setObjectName("actionSave")
         self.menuFile.addAction(self.actionAddImage)
         self.menuFile.addAction(self.actionSave)

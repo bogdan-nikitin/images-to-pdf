@@ -1,25 +1,24 @@
+from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPainter, QPixmap
-from PyQt5.QtCore import QRect, Qt, QPoint
 from PyQt5.QtWidgets import QWidget
 
 
 class ScalingImage(QWidget):
-    """Изображение, которое масштабируется вместе с родительским объектом,
-    сохраняя пропорции."""
+    """
+    Image that scaling with parent, keeping aspect ratio
+    """
+
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=parent)
         self.pix_map = QPixmap()
 
     def setPixmap(self, pix_map):
-        """Задать картинку."""
         self.pix_map = pix_map
         self.update()
 
     def paintEvent(self, event):
-        """Метод отвечает за отрисовку картинки."""
         if not self.pix_map.isNull():
             painter = QPainter(self)
-            # painter.setRenderHint(QPainter.SmoothPixmapTransform)
             width, height = self.width(), self.height()
 
             size = self.pix_map.size()
