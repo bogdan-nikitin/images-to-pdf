@@ -338,6 +338,8 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionNew"/>
+    <addaction name="separator"/>
     <addaction name="actionAddImage"/>
     <addaction name="actionSave"/>
    </widget>
@@ -346,7 +348,7 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionAddImage">
    <property name="text">
-    <string>Add Image(s)</string>
+    <string>Add Image(s)...</string>
    </property>
   </action>
   <action name="actionSave">
@@ -354,7 +356,12 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Save</string>
+    <string>Save...</string>
+   </property>
+  </action>
+  <action name="actionNew">
+   <property name="text">
+    <string>New...</string>
    </property>
   </action>
  </widget>
