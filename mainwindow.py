@@ -180,6 +180,10 @@ class Ui_MainWindow(object):
         self.actionSave = QtWidgets.QAction(MainWindow)
         self.actionSave.setEnabled(False)
         self.actionSave.setObjectName("actionSave")
+        self.actionNew = QtWidgets.QAction(MainWindow)
+        self.actionNew.setObjectName("actionNew")
+        self.menuFile.addAction(self.actionNew)
+        self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionAddImage)
         self.menuFile.addAction(self.actionSave)
         self.menubar.addAction(self.menuFile.menuAction())
@@ -196,7 +200,8 @@ class Ui_MainWindow(object):
         self.pagesCountLabel.setText(_translate("MainWindow", "0"))
         self.saveBtn.setText(_translate("MainWindow", "Save to PDF"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
-        self.actionAddImage.setText(_translate("MainWindow", "Add Image(s)"))
-        self.actionSave.setText(_translate("MainWindow", "Save"))
+        self.actionAddImage.setText(_translate("MainWindow", "Add Image(s)..."))
+        self.actionSave.setText(_translate("MainWindow", "Save..."))
+        self.actionNew.setText(_translate("MainWindow", "New..."))
 from scaling_image import ScalingImage
 from spinbox import SpinBox

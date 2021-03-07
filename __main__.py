@@ -43,7 +43,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.saveBtn.clicked.connect(self.save_dialog)
         self.actionSave.triggered.connect(self.save_dialog)
         self.actionAddImage.triggered.connect(self.image_dialog)
+        self.actionNew.triggered.connect(self.new_triggered)
+
         self.transpose_image_mutex = QMutex()
+
+    def new_triggered(self):
+        self.data_items.clear()
+        self.imagesListWidget.clear()
+        self.no_images()
 
     def transpose_image(self, index, method):
         self.data_items[index].img = self.data_items[index].img.transpose(
@@ -74,18 +81,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.saveBtn.setEnabled(enabled)
         self.actionSave.setEnabled(enabled)
 
+    def no_images(self):
+        self.indexBox.setMinimum(0)
+        self.indexBox.setValue(0)
+        self.imageWidget.setPixmap(QPixmap())
+        self.fileNameLabel.setText('')
+        self.set_enabled_action_buttons(False)
+        self.switch_arrows(0)
+        self.indexBox.setMaximum(0)
+        self.pagesCountLabel.setText('0')
+        # SpinBox gets the focus for some reason, so we just clear it
+        self.indexBox.clearFocus()
+
     def remove_image(self, index):
         self.imagesListWidget.takeItem(index)
         self.data_items.pop(index)
-        self.indexBox.setMaximum(self.imagesListWidget.count())
-        self.pagesCountLabel.setText(str(self.imagesListWidget.count()))
         if self.imagesListWidget.count() == 0:
-            self.indexBox.setMinimum(0)
-            self.indexBox.setValue(0)
-            self.imageWidget.setPixmap(QPixmap())
-            self.fileNameLabel.setText('')
-            self.set_enabled_action_buttons(False)
+            self.no_images()
         else:
+            self.indexBox.setMaximum(self.imagesListWidget.count())
+            self.pagesCountLabel.setText(str(self.imagesListWidget.count()))
             self.set_current_item(min(index, self.imagesListWidget.count() - 1))
 
     def to_left_btn_clicked(self):
